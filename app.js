@@ -1,5 +1,11 @@
 /** @jsx React.DOM */
 
+function invariant(cond, message) {
+  if (!cond) {
+    throw new Error('Invariant Violation: ' + message);
+  }
+}
+
 function interpolateIDs(constraints, mapping) {
   // TODO: use a real parser for better errors etc
   for (var key in mapping) {
@@ -37,6 +43,7 @@ var idSeed = 0;
 var AutoLayout = React.createClass({
   componentWillMount: function() {
     var engine = GSS.engines[0];
+    invariant(engine, 'GSS is not ready yet');
     this.styleSheet = new GSS.StyleSheet({engine: engine, engineId: engine.id});
   },
 
