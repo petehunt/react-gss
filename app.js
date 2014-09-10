@@ -62,6 +62,10 @@ var AutoLayout = React.createClass({
     }
   },
 
+  componentWillUnmount: function() {
+    this.styleSheet.destroyRules();
+  },
+
   getDefaultProps: function() {
     return {name: 'this', constraints: ''};
   },
