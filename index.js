@@ -8,6 +8,19 @@ function invariant(cond, message) {
   }
 }
 
+function merge() {
+  var a = {};
+  Array.prototype.slice.call(arguments).forEach(function(x) {
+    for (var k in x) {
+      if (!x.hasOwnProperty(k)) {
+        continue;
+      }
+      a[k] = x[k];
+    }
+  });
+  return a;
+}
+
 function interpolateIDs(constraints, mapping) {
   // TODO: use a real parser for better errors etc
   for (var key in mapping) {
@@ -106,7 +119,18 @@ var AutoLayout = React.createClass({
     constraints += this.getConstraintsForProps(this.props);
 
     React.Children.forEach(this.props.children, function(box) {
-      constraints += this.getConstraintsForProps(box.props);
+      var boxProps = box.props;
+      var autoIntrinsicHeight = (
+        !boxProps.hasOwnProperty('height') &&
+          !(boxProps.hasOwnProperty('top') && boxProps.hasOwnProperty('bottom'))
+      );
+      if (autoIntrinsicHeight) {
+        boxProps = merge(box.props, {
+          height: boxProps.name + '[intrinsic-height]'
+        });
+      }
+
+      constraints += this.getConstraintsForProps(boxProps);
     }, this);
 
     constraints = interpolateIDs(constraints, this.getMapping());

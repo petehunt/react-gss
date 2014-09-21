@@ -7,7 +7,7 @@ var VerticalCenter = React.createClass({
   render: function() {
     return this.transferPropsTo(
       <AutoLayout>
-        <Box name="inner" height="inner[intrinsic-height]" centerY="this[centerY]">{this.props.children}</Box>
+        <Box name="inner" centerY="this[centerY]">{this.props.children}</Box>
       </AutoLayout>
     );
   }
@@ -21,8 +21,7 @@ var App = React.createClass({
           name="heading"
           left="this[left]"
           right="this[right]"
-          top="this[top]"
-          height="heading[intrinsic-height]">
+          top="this[top]">
           <h1>Heading</h1>
         </Box>
         <Box
