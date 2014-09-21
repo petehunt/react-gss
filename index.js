@@ -21,14 +21,6 @@ function merge() {
   return a;
 }
 
-function interpolateIDs(constraints, mapping) {
-  // TODO: use a real parser for better errors etc
-  for (var key in mapping) {
-    constraints = constraints.replace(new RegExp(key + '\\[', 'g'), mapping[key] + '[');
-  }
-  return constraints;
-}
-
 var LAYOUT_KEYS = {
   'width': 'width',
   'height': 'height',
@@ -37,14 +29,17 @@ var LAYOUT_KEYS = {
   'top': 'top',
   'bottom': 'bottom',
   'centerX': 'center-x',
-  'centerY': 'center-y'
+  'centerY': 'center-y',
+  'intrinsicHeight': 'intrinsic-height'
 };
 
-function normalizeKeys(s) {
-  for (var key in LAYOUT_KEYS) {
-    s = s.replace(new RegExp(key, 'g'), LAYOUT_KEYS[key]);
-  }
-  return s;
+function interpolateIDsAndNormalizeKeys(constraints, mapping) {
+  // TODO: use a real parser for better errors etc
+  return constraints.replace(/([\w\d_-]+)\[([\w\d_-]+)\]/g, function(match, name, propertyName) {
+    invariant(LAYOUT_KEYS[propertyName], 'Invalid layout property name: ' + propertyName);
+    invariant(mapping[name], 'Unknown Box or AutoLayout name: ' + name);
+    return mapping[name] + '[' + LAYOUT_KEYS[propertyName] + ']';
+  });
 }
 
 var Box = React.createClass({
@@ -111,9 +106,10 @@ var AutoLayout = React.createClass({
           value = '== ' + value;
         }
 
-        constraints += props.name + '[' + LAYOUT_KEYS[key] + '] ' + normalizeKeys(value) + ';\n';
+        constraints += props.name + '[' + key + '] ' + value + ';\n';
       }
     }
+    constraints = interpolateIDsAndNormalizeKeys(constraints, this.getMapping());
     return constraints;
   },
 
@@ -131,14 +127,13 @@ var AutoLayout = React.createClass({
       );
       if (autoIntrinsicHeight) {
         boxProps = merge(box.props, {
-          height: boxProps.name + '[intrinsic-height]'
+          height: boxProps.name + '[intrinsicHeight]'
         });
       }
 
       constraints += this.getConstraintsForProps(boxProps, true);
     }, this);
 
-    constraints = interpolateIDs(constraints, this.getMapping());
     return constraints;
   },
 
