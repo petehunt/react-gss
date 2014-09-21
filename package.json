@@ -17,9 +17,7 @@
     "url": "https://github.com/petehunt/react-gss/issues"
   },
   "homepage": "https://github.com/petehunt/react-gss",
-  "dependencies": {
-    "react": "^0.11.2"
-  },
-  "devDependencies": {
+  "peerDependencies": {
+    "react": ">=0.11.0"
   }
 }
