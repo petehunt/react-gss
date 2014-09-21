@@ -49,18 +49,13 @@ var Box = React.createClass({
 });
 
 var idSeed = 0;
-var foucStylesheetAdded = false;
 
 var AutoLayout = React.createClass({
-  componentWillMount: function() {
-    if (!foucStylesheetAdded && typeof document !== 'undefined') {
-      var styleNode = document.createElement('style');
-      styleNode.type = 'text/css';
-      styleNode.innerText = '.react-gss__auto-layout { visibility: hidden; }\n.gss-ready .react-gss__auto-layout { visibility: visible; }';
-      document.head.appendChild(styleNode);
-      foucStylesheetAdded = true;
-    }
+  getInitialState: function() {
+    return {layoutCompleted: false};
+  },
 
+  componentWillMount: function() {
     invariant(typeof GSS !== 'undefined', 'GSS not set up on the page');
     var engine = GSS.engines[0];
     invariant(engine, 'GSS is not ready yet. Did you forget GSS.once(\'afterLoaded\', ...) ?');
@@ -72,6 +67,14 @@ var AutoLayout = React.createClass({
     var constraints = this.getConstraints();
     this.styleSheet.addRules(GSS.compile(constraints));
     this.lastConstraints = constraints;
+
+    GSS.on('display', this.handleDisplay);
+  },
+
+  handleDisplay: function() {
+    if (this.isMounted() && !this.state.layoutCompleted) {
+      this.setState({layoutCompleted: true});
+    }
   },
 
   componentDidUpdate: function() {
@@ -171,7 +174,7 @@ var AutoLayout = React.createClass({
     });
 
     return this.transferPropsTo(
-      React.DOM.div({className: 'react-gss__auto-layout'}, children)
+      React.DOM.div({style: {visibility: this.state.layoutCompleted ? 'visible' : 'hidden'}}, children)
     );
   }
 });
