@@ -64,6 +64,7 @@ var AutoLayout = React.createClass({
     invariant(typeof GSS !== 'undefined', 'GSS not set up on the page');
     var engine = GSS.engines[0];
     invariant(engine, 'GSS is not ready yet. Did you forget GSS.once(\'afterLoaded\', ...) ?');
+    invariant(!GSS.config.observe, 'You cannot use GSS in observe mode. Did you set observe: false in GSS_CONFIG?');
     this.styleSheet = new GSS.StyleSheet({engine: engine, engineId: engine.id});
   },
 
