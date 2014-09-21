@@ -95,9 +95,14 @@ var AutoLayout = React.createClass({
     return {name: 'this', constraints: ''};
   },
 
-  getConstraintsForProps: function(props) {
+  getConstraintsForProps: function(props, layoutKeysOnly) {
     var constraints = '';
     for (var key in props) {
+      // TODO: warn about this where the descriptor is constructed (in 0.12?)
+      invariant(
+        !layoutKeysOnly || (key === 'name' || key === 'children' || LAYOUT_KEYS[key]),
+        'Unknown layout prop: ' + key
+      );
       if (LAYOUT_KEYS[key]) {
         var value = props[key].trim();
         var beginning = value.length >= 2 ? value.slice(0, 2) : '';
@@ -116,7 +121,7 @@ var AutoLayout = React.createClass({
     // lets build up the stylesheet mmkay
     var constraints = this.props.constraints;
 
-    constraints += this.getConstraintsForProps(this.props);
+    constraints += this.getConstraintsForProps(this.props, false);
 
     React.Children.forEach(this.props.children, function(box) {
       var boxProps = box.props;
@@ -130,7 +135,7 @@ var AutoLayout = React.createClass({
         });
       }
 
-      constraints += this.getConstraintsForProps(boxProps);
+      constraints += this.getConstraintsForProps(boxProps, true);
     }, this);
 
     constraints = interpolateIDs(constraints, this.getMapping());
