@@ -41,9 +41,18 @@ var Box = React.createClass({
 });
 
 var idSeed = 0;
+var foucStylesheetAdded = false;
 
 var AutoLayout = React.createClass({
   componentWillMount: function() {
+    if (!foucStylesheetAdded && typeof document !== 'undefined') {
+      var styleNode = document.createElement('style');
+      styleNode.type = 'text/css';
+      styleNode.innerText = '.react-gss__auto-layout { visibility: hidden; }\n.gss-ready .react-gss__auto-layout { visibility: visible; }';
+      document.head.appendChild(styleNode);
+      foucStylesheetAdded = true;
+    }
+
     invariant(typeof GSS !== 'undefined', 'GSS not set up on the page');
     var engine = GSS.engines[0];
     invariant(engine, 'GSS is not ready yet');
@@ -101,7 +110,6 @@ var AutoLayout = React.createClass({
     }, this);
 
     constraints = interpolateIDs(constraints, this.getMapping());
-    console.log('generated constraints:',constraints);
     return constraints;
   },
 
@@ -138,7 +146,7 @@ var AutoLayout = React.createClass({
     });
 
     return this.transferPropsTo(
-      React.DOM.div(null, children)
+      React.DOM.div({className: 'react-gss__auto-layout'}, children)
     );
   }
 });
