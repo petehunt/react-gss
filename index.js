@@ -35,7 +35,7 @@ var LAYOUT_KEYS = {
 
 function interpolateIDsAndNormalizeKeys(constraints, mapping) {
   // TODO: use a real parser for better errors etc
-  return constraints.replace(/([\w\d_-]+)\[([\w\d_-]+)\]/g, function(match, name, propertyName) {
+  return constraints.replace(/(\w[\w\d_-]+)\.(\w[\w\d_-]+)/g, function(match, name, propertyName) {
     invariant(LAYOUT_KEYS[propertyName], 'Invalid layout property name: ' + propertyName);
     invariant(mapping[name], 'Unknown Box or AutoLayout name: ' + name);
     return mapping[name] + '[' + LAYOUT_KEYS[propertyName] + ']';
@@ -110,7 +110,7 @@ var AutoLayout = React.createClass({
           value = '== ' + value;
         }
 
-        constraints += props.name + '[' + key + '] ' + value + ';\n';
+        constraints += props.name + '.' + key + ' ' + value + ';\n';
       }
     }
     constraints = interpolateIDsAndNormalizeKeys(constraints, this.getMapping());
@@ -131,7 +131,7 @@ var AutoLayout = React.createClass({
       );
       if (autoIntrinsicHeight) {
         boxProps = merge(box.props, {
-          height: boxProps.name + '[intrinsicHeight]'
+          height: boxProps.name + '.intrinsicHeight'
         });
       }
 
