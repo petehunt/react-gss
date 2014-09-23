@@ -4,73 +4,20 @@ var React = require('react');
 var mq = require('react-responsive');
 var {AutoLayout, Box} = require('./index');
 
-var VerticalCenter = React.createClass({
-  render: function() {
-    return this.transferPropsTo(
-      <AutoLayout>
-        <Box name="inner" centerY="this.centerY">{this.props.children}</Box>
-      </AutoLayout>
-    );
-  }
-});
-
 var App = React.createClass({
   render: function() {
     return (
-      <div>
-        <mq minWidth={960}>
-          <AutoLayout top="window.top" bottom="window.bottom" left="window.left" right="window.right">
-            <Box
-              name="heading"
-              left="this.left"
-              right="this.right"
-              top="this.top">
-              <h1>Heading</h1>
-            </Box>
-            <Box
-              name="leftNav"
-              right="heading.left + 64"
-              top="heading.bottom"
-              left="this.left">
-              <div>Left nav</div>
-            </Box>
-            <Box
-              name="content"
-              left="leftNav.right"
-              right="this.right"
-              top="leftNav.top"
-              bottom="this.bottom">
-              <VerticalCenter><div>Content</div></VerticalCenter>
-            </Box>
+      <AutoLayout left="window.left" right="window.right" top="window.top" bottom="window.bottom">
+        <Box name="header" height="header.intrinsicHeight" top="this.top" left="this.left" right="this.right"><h1>This is the header</h1></Box>
+        <Box name="leftNav" top="header.bottom" left="this.left" bottom="this.bottom" width="64">
+          <div style={{border: '1px solid black'}}>This is the left nav</div>
+        </Box>
+        <Box name="content" left="leftNav.right + 10" top="leftNav.top" bottom="leftNav.bottom" right="this.right">
+          <AutoLayout name="contentLayout" style={{border: '1px solid red'}}>
+            <Box left="contentLayout.left" height="col1.intrinsicHeight" centerX="contentLayout.centerX" name="col1" centerY="contentLayout.centerY"><span style={{border: '1px solid gray'}}>Content here</span></Box>
           </AutoLayout>
-        </mq>
-        <mq maxWidth={960}>
-          <AutoLayout top="window.top" bottom="window.bottom" left="window.left" right="window.right">
-            <Box
-              name="heading"
-              left="this.left"
-              right="this.right"
-              top="this.top">
-              <h1>Heading</h1>
-            </Box>
-            <Box
-              name="leftNav"
-              right="this.right"
-              top="heading.bottom"
-              left="this.left">
-              <div>Left nav</div>
-            </Box>
-            <Box
-              name="content"
-              left="this.left"
-              right="this.right"
-              top="leftNav.bottom"
-              bottom="this.bottom">
-              <VerticalCenter><div>Content</div></VerticalCenter>
-            </Box>
-          </AutoLayout>
-        </mq>
-      </div>
+        </Box>
+      </AutoLayout>
     );
   }
 });

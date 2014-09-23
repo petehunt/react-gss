@@ -30,7 +30,8 @@ var LAYOUT_KEYS = {
   'bottom': 'bottom',
   'centerX': 'center-x',
   'centerY': 'center-y',
-  'intrinsicHeight': 'intrinsic-height'
+  'intrinsicHeight': 'intrinsic-height',
+  'intrinsicWidth': 'intrinsic-width'
 };
 
 function interpolateIDsAndNormalizeKeys(constraints, mapping) {
@@ -124,18 +125,7 @@ var AutoLayout = React.createClass({
     constraints += this.getConstraintsForProps(this.props, false);
 
     React.Children.forEach(this.props.children, function(box) {
-      var boxProps = box.props;
-      var autoIntrinsicHeight = (
-        !boxProps.hasOwnProperty('height') &&
-          !(boxProps.hasOwnProperty('top') && boxProps.hasOwnProperty('bottom'))
-      );
-      if (autoIntrinsicHeight) {
-        boxProps = merge(box.props, {
-          height: boxProps.name + '.intrinsicHeight'
-        });
-      }
-
-      constraints += this.getConstraintsForProps(boxProps, true);
+      constraints += this.getConstraintsForProps(box.props, true);
     }, this);
 
     return constraints;
@@ -156,6 +146,7 @@ var AutoLayout = React.createClass({
       'window': '::window'
     };
     React.Children.forEach(this.props.children, function(box) {
+      invariant(box.props.name, 'Box requires a name');
       mapping[box.props.name] = this.getSelector(this.refs[box.props.name]);
     }, this);
 
