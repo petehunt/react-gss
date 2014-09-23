@@ -1,6 +1,6 @@
 {
   "name": "react-gss",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Grid stylesheets for React",
   "main": "index.js",
   "scripts": {
