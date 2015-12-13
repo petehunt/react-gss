@@ -1,5 +1,5 @@
 # react-gss
-
+![unmaintained](http://img.shields.io/badge/status-unmaintained-red.png)
 constraint layout system for components using grid stylesheets
 
 ```js
